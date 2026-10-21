@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flama TV — Interfaz experimental</title>
+<style>
+:root{--bg:#08111f;--panel:#111f33;--accent:#22d3ee;--text:#f4f7fb;--muted:#b7c4d8}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top right,#18365a 0,transparent 42%),var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:24px 4vw;border-bottom:1px solid #28415e}
+.brand{font-size:clamp(24px,3vw,42px);font-weight:800;letter-spacing:.4px}.brand span{color:var(--accent)}
+#clock{font-size:clamp(16px,2vw,24px);color:var(--muted)}
+main{padding:28px 4vw 44px}
+h1{font-size:clamp(26px,3vw,42px);margin:0 0 8px}
+.sub{color:var(--muted);font-size:clamp(14px,1.5vw,20px);margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.tile{min-height:150px;border:3px solid transparent;border-radius:18px;background:linear-gradient(145deg,#182c46,#101b2b);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-decoration:none;color:var(--text);font-size:clamp(16px,1.6vw,23px);font-weight:700;transition:transform .15s,border-color .15s,background .15s;outline:none}
+.tile .icon{font-size:clamp(30px,4vw,54px)}
+.tile:focus,.tile.selected{border-color:var(--accent);background:linear-gradient(145deg,#16415a,#132943);transform:scale(1.035)}
+.info{margin-top:30px;padding:20px 22px;border-radius:16px;background:#101d30;border:1px solid #28415e;color:var(--muted);font-size:clamp(14px,1.35vw,18px);line-height:1.5}
+footer{padding:0 4vw 26px;color:#8fa4bf;font-size:13px}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tile{min-height:120px}}
+</style>
+</head>
+<body>
+<header><div class="brand">🔥 FLAMA <span>TV</span></div><div id="clock">--:--</div></header>
+<main>
+<h1>Tu pantalla, a tu manera.</h1>
+<p class="sub">Interfaz experimental para probar en navegador. Usá las flechas y OK del control remoto.</p>
+<section class="grid" aria-label="Accesos rápidos">
+<a class="tile" href="https://www.youtube.com/"><span class="icon">▶️</span><span>YouTube</span></a>
+<a class="tile" href="https://www.google.com/"><span class="icon">🔎</span><span>Buscar en Google</span></a>
+<a class="tile" href="https://www.netflix.com/"><span class="icon">🎬</span><span>Netflix</span></a>
+<a class="tile" href="https://www.wikipedia.org/"><span class="icon">🌐</span><span>Wikipedia</span></a>
+</section>
+<div class="info"><strong style="color:#fff">Prueba 1</strong><br>Este menú no instala aplicaciones ni reemplaza el sistema del televisor: solo abre páginas web. La reproducción puede depender del navegador y de los servicios. Para volver a este menú, usá el botón Atrás del navegador.</div>
+</main>
+<footer>FLAMA TV · Prototipo local · No cambia el firmware ni guarda datos.</footer>
+<script>
+const tiles=[...document.querySelectorAll('.tile')];let idx=0;
+function select(i){idx=(i+tiles.length)%tiles.length;tiles.forEach((t,j)=>t.classList.toggle('selected',j===idx));tiles[idx].focus({preventScroll:true})}
+document.addEventListener('keydown',e=>{
+ let next=idx;
+ if(e.key==='ArrowRight')next=idx+1;
+ else if(e.key==='ArrowLeft')next=idx-1;
+ else if(e.key==='ArrowDown')next=idx+2;
+ else if(e.key==='ArrowUp')next=idx-2;
+ else if(e.key==='Enter'||e.key===' '){e.preventDefault();tiles[idx].click();return}
+ else return;
+ e.preventDefault();select(next);
+});
+tiles.forEach((t,i)=>t.addEventListener('focus',()=>{idx=i;tiles.forEach((x,j)=>x.classList.toggle('selected',j===i))}));
+function tick(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});}
+tick();setInterval(tick,15000);select(0);
+</script>
+</body></html>
